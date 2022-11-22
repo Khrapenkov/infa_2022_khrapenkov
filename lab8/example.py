@@ -3,7 +3,7 @@ from pygame.draw import *
 from random import randint
 pygame.init()
 
-FPS = 1.5
+FPS = 2
 screen = pygame.display.set_mode((1200, 900))
 
 RED = (255, 0, 0)
@@ -16,35 +16,24 @@ BLACK = (0, 0, 0)
 COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 def new_ball():
-    global x, y, r
-    x = randint(100,700)
-    y = randint(100,500)
-    r = randint(30,50)
+    '''рисует новый шарик '''
+    x = randint(100, 1100)
+    y = randint(100, 900)
+    r = randint(10, 100)
     color = COLORS[randint(0, 5)]
     circle(screen, color, (x, y), r)
-
-def click(event):
-    print(x, y, r)
-
-
 
 pygame.display.update()
 clock = pygame.time.Clock()
 finished = False
-
 
 while not finished:
     clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finished = True
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-			print('Click!')
+
     new_ball()
-    if (event.pos[0] - x)**2 + (event.pos[1] - y)**2 > (x-r)**2+(y-r)**2:
-				
-			elif:
-				finished = True
     pygame.display.update()
     screen.fill(BLACK)
 
