@@ -1,5 +1,6 @@
 import math
 from random import choice
+from pygame.draw import *
 
 import pygame
 
@@ -20,9 +21,10 @@ GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 WIDTH = 800
 HEIGHT = 600
 
-
+X = 50 #координата левого конца пушки
+Y = 550 #координата левого конца пушки
 class Ball:
-    def __init__(self, screen: pygame.Surface, x=40, y=450):
+    def __init__(self, screen: pygame.Surface):
         """ Конструктор класса ball
 
         Args:
@@ -30,8 +32,8 @@ class Ball:
         y - начальное положение мяча по вертикали
         """
         self.screen = screen
-        self.x = x
-        self.y = y
+        self.x = X
+        self.y = Y
         self.r = 10
         self.vx = 0
         self.vy = 0
@@ -51,16 +53,11 @@ class Ball:
         self.vy -= 10 // FPS
         if min(WIDTH - self.x, self.x) <= self.r:
             self.vx = -self.vx
-        if HIGHT - self.y <= self.r:
+        if HEIGHT - self.y <= self.r:
             self.vy = -self.vy
 
     def draw(self):
-        pygame.draw.circle(
-            self.screen,
-            self.color,
-            (self.x, self.y),
-            self.r
-        )
+        pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.r)
 
     def hittest(self, obj):
         """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
@@ -71,15 +68,21 @@ class Ball:
             Возвращает True в случае столкновения мяча и цели. В противном случае возвращает False.
         """
         # FIXME
-            return False
+
+        return False
 
 
 class Gun:
     def __init__(self, screen):
         self.screen = screen
+        self.x = X
+        self.y = Y
+        self.a = 30 #ширина пушки
+        self.b = 100 #длина пушки
+        self.r = 20 #радиус колёс пушки
         self.f2_power = 10
         self.f2_on = 0
-        self.an = 1
+        self.an = 1 #angle
         self.color = GREY
 
     def fire2_start(self, event):
@@ -105,7 +108,7 @@ class Gun:
     def targetting(self, event):
         """Прицеливание. Зависит от положения мыши."""
         if event:
-            self.an = math.atan((event.pos[1]-450) / (event.pos[0]-20))
+            self.an = math.atan((self.y-event.pos[1]) / (event.pos[0]-self.x))
         if self.f2_on:
             self.color = RED
         else:
@@ -113,6 +116,18 @@ class Gun:
 
     def draw(self):
         # FIXIT don't know how to do it
+        a = self.a
+        b = self.b
+        x = self.x
+        y = self.y
+        sina = math.sin(self.an)
+        cosa = math.cos(self.an)
+        polygon(screen, BLACK, [(x + a/2*sina, y + a/2*cosa),
+                                (x + a/2*sina + b*cosa, y + a/2*cosa - b*sina),
+                                (x - a/2*sina + b*cosa, y - a/2*cosa - b*sina),
+                                (x - a/2*sina, y - a/2*cosa),
+                                (x + a/2*sina, y + a/2*cosa)])
+        circle(screen, BLACK, (x, y), 40)
 
     def power_up(self):
         if self.f2_on:
@@ -124,24 +139,26 @@ class Gun:
 
 
 class Target:
-    # self.points = 0
-    # self.live = 1
+    def __init__(self, screen):
+        self.screen = screen
+        self.points = 0
+        self.live = 1
     # FIXME: don't work!!! How to call this functions when object is created?
-    # self.new_target()
+        self.new_target()
 
     def new_target(self):
         """ Инициализация новой цели. """
-        x = self.x = rnd(600, 780)
-        y = self.y = rnd(300, 550)
-        r = self.r = rnd(2, 50)
-        color = self.color = RED
+        x = self.x = choice(list(range(600, 781)))
+        y = self.y = choice(list(range(300, 551)))
+        r = self.r = choice(list(range(2, 50))) #[range()]?
+        color = self.color = choice(GAME_COLORS)
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
         self.points += points
 
     def draw(self):
-        ...
+        circle(screen, RED, (self.x, self.y), self.r)
 
 
 pygame.init()
@@ -151,7 +168,7 @@ balls = []
 
 clock = pygame.time.Clock()
 gun = Gun(screen)
-target = Target()
+target = Target(screen)
 finished = False
 
 while not finished:
