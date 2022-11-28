@@ -4,13 +4,13 @@ from random import randint
 
 pygame.init()
 
-A = 1300
-B = 700
+WIDTH = 1300
+HIGHT = 700
 Rmin = 30
 Rmax = 60
 Vmin = 7
 Vmax = 10
-screen = pygame.display.set_mode((A, B))
+screen = pygame.display.set_mode((WIDTH, HIGHT))
 FPS = 80
 n = 5
 
@@ -33,8 +33,8 @@ def create_circles():
     vy = []
     color = []
     for i in range(n):
-        x += [randint(Rmax, A-Rmax)]
-        y += [randint(Rmax, B-Rmax)]
+        x += [randint(Rmax, WIDTH-Rmax)]
+        y += [randint(Rmax, HIGHT-Rmax)]
         r += [randint(Rmin, Rmax)]
         vx += [randint(Vmin, Vmax)*(2*randint(0, 1)-1)]
         vy += [randint(Vmin, Vmax)*(2*randint(0, 1)-1)]
@@ -59,8 +59,8 @@ def new_circle():
     '''создаёт и рисует новый кружок: заносит данные о нём в список кружков; т.е. вместе с
     функцией "catch_check(event)" заменяет пойманный кружок на новый'''
     global x, y, r, color, vx, vy
-    x += [randint(Rmax, A - Rmax)]
-    y += [randint(Rmax, B - Rmax)]
+    x += [randint(Rmax, WIDTH - Rmax)]
+    y += [randint(Rmax, HIGHT - Rmax)]
     r += [randint(Rmin, Rmax)]
     vx += [randint(Vmin, Vmax) * (2 * randint(0, 1) - 1)]
     vy += [randint(Vmin, Vmax) * (2 * randint(0, 1) - 1)]
@@ -76,9 +76,9 @@ def move_circles():
 def wall_check():
     '''проверяет необходимость отскока и отражает скорости кружков если нужно'''
     for i in range(n):
-        if min(A-x[i], x[i]) <= r[i]:
+        if min(WIDTH-x[i], x[i]) <= r[i]:
             vx[i] = -vx[i]
-        if min(B-y[i], y[i]) <= r[i]:
+        if min(HIGHT-y[i], y[i]) <= r[i]:
             vy[i] = -vy[i]
 
 def draw_circles():
@@ -106,7 +106,7 @@ while not finished:
             if catch_check(event):
                 new_circle()
                 score += 1
-    text = shrift.render("Ваш счёт: " + str(score), 1, text_color)
+    text = shrift.render("Ваш счёт: " + str(score), True, text_color)
     screen.blit(text, (1, 1))
     pygame.display.update()
     screen.fill(BLACK)
