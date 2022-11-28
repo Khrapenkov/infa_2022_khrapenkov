@@ -5,14 +5,14 @@ from random import randint
 pygame.init()
 
 WIDTH = 1300
-HIGHT = 700
+HEIGHT = 700
 Rmin = 30
 Rmax = 60
 Vmin = 7
 Vmax = 10
-screen = pygame.display.set_mode((WIDTH, HIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FPS = 80
-n = 5
+n = 5 #количество кружков на экране
 
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -34,7 +34,7 @@ def create_circles():
     color = []
     for i in range(n):
         x += [randint(Rmax, WIDTH-Rmax)]
-        y += [randint(Rmax, HIGHT-Rmax)]
+        y += [randint(Rmax, HEIGHT - Rmax)]
         r += [randint(Rmin, Rmax)]
         vx += [randint(Vmin, Vmax)*(2*randint(0, 1)-1)]
         vy += [randint(Vmin, Vmax)*(2*randint(0, 1)-1)]
@@ -60,7 +60,7 @@ def new_circle():
     функцией "catch_check(event)" заменяет пойманный кружок на новый'''
     global x, y, r, color, vx, vy
     x += [randint(Rmax, WIDTH - Rmax)]
-    y += [randint(Rmax, HIGHT - Rmax)]
+    y += [randint(Rmax, HEIGHT - Rmax)]
     r += [randint(Rmin, Rmax)]
     vx += [randint(Vmin, Vmax) * (2 * randint(0, 1) - 1)]
     vy += [randint(Vmin, Vmax) * (2 * randint(0, 1) - 1)]
@@ -78,7 +78,7 @@ def wall_check():
     for i in range(n):
         if min(WIDTH-x[i], x[i]) <= r[i]:
             vx[i] = -vx[i]
-        if min(HIGHT-y[i], y[i]) <= r[i]:
+        if min(HEIGHT - y[i], y[i]) <= r[i]:
             vy[i] = -vy[i]
 
 def draw_circles():

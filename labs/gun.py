@@ -48,6 +48,11 @@ class Ball:
         # FIXME
         self.x += self.vx
         self.y -= self.vy
+        self.vy -= 10 // FPS
+        if min(WIDTH - self.x, self.x) <= self.r:
+            self.vx = -self.vx
+        if HIGHT - self.y <= self.r:
+            self.vy = -self.vy
 
     def draw(self):
         pygame.draw.circle(
