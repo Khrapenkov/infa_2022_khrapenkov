@@ -5,7 +5,7 @@ from pygame.draw import *
 import pygame
 
 
-FPS = 30
+FPS = 50
 
 RED = 0xFF0000
 BLUE = 0x0000FF
@@ -39,8 +39,13 @@ class Ball:
         '''Перемещает мяч по прошествии единицы времени.'''
         self.x += self.vx
         self.y -= self.vy
-        self.vy -= 10 // FPS
-        if WIDTH - self.x <= self.r:
+        self.vx -= self.vx * 0.02 #сопротивление воздуха
+        self.vy -= self.vy * 0.02 + 20/FPS #сопротивление воздуха и гравитация
+        if abs(self.vx) <= 0.05:
+            self.vx = 0
+        if abs(self.vy) <= 0.05:
+            self.vy = 0
+        if min(self.x, WIDTH - self.x) <= self.r:
             self.vx = -self.vx
         if HEIGHT - self.y <= self.r:
             self.vy = -self.vy
@@ -94,7 +99,8 @@ class Gun:
     def targetting(self, event):
         """Прицеливание. Зависит от положения мыши."""
         if event:
-            self.an = math.atan((self.y-event.pos[1]) / (event.pos[0]-self.x))
+            if event.pos[0]-self.x != 0:
+                self.an = math.atan((self.y-event.pos[1]) / (event.pos[0]-self.x))
         if self.f2_on:
             self.color = RED
         else:
