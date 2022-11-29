@@ -71,6 +71,7 @@ class Gun:
         self.screen = screen
         self.x = X
         self.y = Y
+        self.length = GUN_LENGTH
         self.f2_power = 10
         self.f2_on = 0
         self.an = 1 #angle
@@ -95,6 +96,7 @@ class Gun:
         balls.append(new_ball)
         self.f2_on = 0
         self.f2_power = 10
+        self.length = GUN_LENGTH
 
     def targetting(self, event):
         """Прицеливание. Зависит от положения мыши."""
@@ -109,7 +111,7 @@ class Gun:
     def draw(self):
         # FIXIT don't know how to do it
         a = GUN_WIDTH
-        b = GUN_LENGTH
+        b = self.length
         x = self.x
         y = self.y
         sina = math.sin(self.an)
@@ -125,6 +127,7 @@ class Gun:
         if self.f2_on:
             if self.f2_power < 100:
                 self.f2_power += 1
+                self.length += 1
             self.color = RED
         else:
             self.color = GREY
@@ -140,7 +143,7 @@ class Target:
 
     def new_target(self):
         """ Инициализация новой цели. """
-        x = self.x = choice(list(range(600, 781)))
+        x = self.x = choice(list(range(600, 751)))
         y = self.y = choice(list(range(300, 551)))
         r = self.r = choice(list(range(2, 50))) #[range()]?
         color = self.color = choice(GAME_COLORS)
