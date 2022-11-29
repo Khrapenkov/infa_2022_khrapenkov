@@ -20,17 +20,12 @@ GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 WIDTH = 800
 HEIGHT = 600
-
-X = 50 #координата левого конца пушки
-Y = 550 #координата левого конца пушки
+GUN_WIDTH = 30 #ширина пушки
+GUN_LENGTH = 100 #длина пушки
+GUN_RADIUS = 20 #радиус колёс пушки
+X, Y = 50, 550 #начальное положение пушки и мяча
 class Ball:
     def __init__(self, screen: pygame.Surface):
-        """ Конструктор класса ball
-
-        Args:
-        x - начальное положение мяча по горизонтали
-        y - начальное положение мяча по вертикали
-        """
         self.screen = screen
         self.x = X
         self.y = Y
@@ -41,17 +36,11 @@ class Ball:
         self.live = 30
 
     def move(self):
-        """Переместить мяч по прошествии единицы времени.
-
-        Метод описывает перемещение мяча за один кадр перерисовки. То есть, обновляет значения
-        self.x и self.y с учетом скоростей self.vx и self.vy, силы гравитации, действующей на мяч,
-        и стен по краям окна (размер окна 800х600).
-        """
-        # FIXME
+        '''Перемещает мяч по прошествии единицы времени.'''
         self.x += self.vx
         self.y -= self.vy
         self.vy -= 10 // FPS
-        if min(WIDTH - self.x, self.x) <= self.r:
+        if WIDTH - self.x <= self.r:
             self.vx = -self.vx
         if HEIGHT - self.y <= self.r:
             self.vy = -self.vy
@@ -77,9 +66,6 @@ class Gun:
         self.screen = screen
         self.x = X
         self.y = Y
-        self.a = 30 #ширина пушки
-        self.b = 100 #длина пушки
-        self.r = 20 #радиус колёс пушки
         self.f2_power = 10
         self.f2_on = 0
         self.an = 1 #angle
@@ -98,9 +84,9 @@ class Gun:
         bullet += 1
         new_ball = Ball(self.screen)
         new_ball.r += 5
-        self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
+        self.an = math.atan2((new_ball.y-event.pos[1]), (event.pos[0]-new_ball.x))
         new_ball.vx = self.f2_power * math.cos(self.an)
-        new_ball.vy = - self.f2_power * math.sin(self.an)
+        new_ball.vy = self.f2_power * math.sin(self.an)
         balls.append(new_ball)
         self.f2_on = 0
         self.f2_power = 10
@@ -116,18 +102,18 @@ class Gun:
 
     def draw(self):
         # FIXIT don't know how to do it
-        a = self.a
-        b = self.b
+        a = GUN_WIDTH
+        b = GUN_LENGTH
         x = self.x
         y = self.y
         sina = math.sin(self.an)
         cosa = math.cos(self.an)
-        polygon(screen, BLACK, [(x + a/2*sina, y + a/2*cosa),
+        polygon(screen, self.color, [(x + a/2*sina, y + a/2*cosa),
                                 (x + a/2*sina + b*cosa, y + a/2*cosa - b*sina),
                                 (x - a/2*sina + b*cosa, y - a/2*cosa - b*sina),
                                 (x - a/2*sina, y - a/2*cosa),
                                 (x + a/2*sina, y + a/2*cosa)])
-        circle(screen, BLACK, (x, y), 40)
+        circle(screen, BLACK, (x, y), GUN_RADIUS)
 
     def power_up(self):
         if self.f2_on:
@@ -158,7 +144,7 @@ class Target:
         self.points += points
 
     def draw(self):
-        circle(screen, RED, (self.x, self.y), self.r)
+        circle(screen, self.color, (self.x, self.y), self.r)
 
 
 pygame.init()
@@ -169,16 +155,15 @@ balls = []
 clock = pygame.time.Clock()
 gun = Gun(screen)
 target = Target(screen)
+shrift = pygame.font.SysFont('Times New Roman', 30)
+text_color = BLACK
 finished = False
 
 while not finished:
-    screen.fill(WHITE)
     gun.draw()
     target.draw()
     for b in balls:
         b.draw()
-    pygame.display.update()
-
     clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -197,5 +182,9 @@ while not finished:
             target.hit()
             target.new_target()
     gun.power_up()
+    text = shrift.render("Ваш счёт: " + str(bullet), True, text_color)
+    screen.blit(text, (1, 1))
+    pygame.display.update()
+    screen.fill(WHITE)
 
 pygame.quit()
