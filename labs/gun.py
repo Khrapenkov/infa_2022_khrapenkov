@@ -140,9 +140,9 @@ class Target:
 
     def new_target(self):
         """ Инициализация новой цели. """
-        self.x = randint(600, 750)
-        self.y = randint(300, 551)
-        self.r = randint(2, 50)
+        self.r = randint(10, 50)
+        self.x = randint(WIDTH // 2, WIDTH - self.r)
+        self.y = randint(self.r, HEIGHT - 100)
         self.color = GAME_COLORS[randint(0, 5)]
 
     def hit(self, points=1):
@@ -186,7 +186,7 @@ def main():
                 gun.targetting(event)
 
         for b in balls:
-            if b.hit_test(target) and target.live:
+            if b.hit_test(target):
                 target.live = 0
                 target.hit()
                 target.new_target()
