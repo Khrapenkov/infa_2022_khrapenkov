@@ -6,10 +6,10 @@ WIDTH = 1300
 HEIGHT = 700
 Rmin = 30
 Rmax = 60
-Vmin = 7
-Vmax = 10
+Vmin = 5
+Vmax = 8
 FPS = 80
-n = 5  # количество кружков на экране
+n = 10  # количество кружков на экране
 
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -76,9 +76,9 @@ class Circles:
     def wall_check(self):
         """Проверяет необходимость отскока и отражает скорости кружков если нужно"""
         for i in range(n):
-            if min(WIDTH - self.x[i], self.x[i]) <= self.r[i]:
+            if (self.vx[i] > 0 and WIDTH - self.x[i] <= self.r[i]) or (self.vx[i] < 0 and self.x[i] <= self.r[i]):
                 self.vx[i] = -self.vx[i]
-            if min(HEIGHT - self.y[i], self.y[i]) <= self.r[i]:
+            if (self.vy[i] > 0 and HEIGHT - self.y[i] <= self.r[i]) or (self.vy[i] < 0 and self.y[i] <= self.r[i]):
                 self.vy[i] = -self.vy[i]
 
     def draw(self):
