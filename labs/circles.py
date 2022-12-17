@@ -6,10 +6,10 @@ WIDTH = 1300
 HEIGHT = 700
 Rmin = 30
 Rmax = 60
-Vmin = 5
-Vmax = 8
+Vmin = 4
+Vmax = 7
 FPS = 80
-n = 10  # количество кружков на экране
+n = 20  # количество кружков на экране
 
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -35,37 +35,36 @@ class Circles:
         """Создаёт и рисует произвольные n кружков """
 
         for i in range(n):
-            self.x += [randint(Rmax, WIDTH - Rmax)]
-            self.y += [randint(Rmax, HEIGHT - Rmax)]
-            self.r += [randint(Rmin, Rmax)]
-            self.vx += [randint(Vmin, Vmax) * (2 * randint(0, 1) - 1)]
-            self.vy += [randint(Vmin, Vmax) * (2 * randint(0, 1) - 1)]
-            self.color += [COLORS[randint(0, 5)]]
+            self.x.append(randint(Rmax, WIDTH - Rmax))
+            self.y.append(randint(Rmax, HEIGHT - Rmax))
+            self.r.append(randint(Rmin, Rmax))
+            self.vx.append(randint(Vmin, Vmax) * (2 * randint(0, 1) - 1))
+            self.vy.append(randint(Vmin, Vmax) * (2 * randint(0, 1) - 1))
+            self.color.append(COLORS[randint(0, 5)])
             circle(self.screen, self.color[i], (self.x[i], self.y[i]), self.r[i])
 
     def catch_check(self, event):
         """Проверяет, попал ли игрок в кружок, и удаляет данные о кружке, в который попали"""
         for i in range(n):
             if (event.pos[0] - self.x[i]) ** 2 + (event.pos[1] - self.y[i]) ** 2 <= self.r[i] ** 2:
-                self.x.remove(self.x[i])
-                self.y.remove(self.y[i])
-                self.r.remove(self.r[i])
-                self.vx.remove(self.vx[i])
-                self.vy.remove(self.vy[i])
-                self.color.remove(self.color[i])
+                self.x.pop(i)
+                self.y.pop(i)
+                self.r.pop(i)
+                self.vx.pop(i)
+                self.vy.pop(i)
+                self.color.pop(i)
                 return True
         return False
 
     def new(self):
         """Создаёт и рисует новый кружок: заносит данные о нём в список кружков; т.е. вместе с
         функцией "catch_check(event)" заменяет пойманный кружок на новый"""
-        self.x += [randint(Rmax, WIDTH - Rmax)]
-        self.y += [randint(Rmax, HEIGHT - Rmax)]
-        self.r += [randint(Rmin, Rmax)]
-        self.vx += [randint(Vmin, Vmax) * (2 * randint(0, 1) - 1)]
-        self.vy += [randint(Vmin, Vmax) * (2 * randint(0, 1) - 1)]
-        self.color += [COLORS[randint(0, 5)]]
-        circle(self.screen, self.color[n - 1], (self.x[n - 1], self.y[n - 1]), self.r[n - 1])
+        self.x.append(randint(Rmax, WIDTH - Rmax))
+        self.y.append(randint(Rmax, HEIGHT - Rmax))
+        self.r.append(randint(Rmin, Rmax))
+        self.vx.append(randint(Vmin, Vmax) * (2 * randint(0, 1) - 1))
+        self.vy.append(randint(Vmin, Vmax) * (2 * randint(0, 1) - 1))
+        self.color.append(COLORS[randint(0, 5)])
 
     def move(self):
         """Создаёт новые координаты центров кружков"""
@@ -102,15 +101,18 @@ def main():
     while not finished:
         clock.tick(FPS)
         circles.wall_check()
-        circles.move()
-        circles.draw()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 finished = True
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                print(circles.x, circles.y, circles.vx, circles.vy, circles.color)
                 if circles.catch_check(event):
+                    print(circles.x, circles.y, circles.vx, circles.vy, circles.color)
                     circles.new()
+                    print(circles.x, circles.y, circles.vx, circles.vy, circles.color, "\n")
                     score += 1
+        circles.move()
+        circles.draw()
         text = shrift.render("Ваш счёт: " + str(score), True, text_color)
         screen.blit(text, (1, 1))
         pygame.display.update()
